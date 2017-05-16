@@ -3,6 +3,7 @@ package com.wilhelm.notaclicker;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -17,8 +18,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-import java.awt.Color;
-
 /**
  * @author Brett_W
  */
@@ -26,6 +25,8 @@ import java.awt.Color;
 public class NotAClicker extends ApplicationAdapter {
 	private SpriteBatch batch;
 	private Viewport viewport;
+	private ProgressBar bar;
+	private ProgressBar.ProgressBarStyle barStyle;
 	
 	@Override
 	public void create () {
@@ -36,25 +37,20 @@ public class NotAClicker extends ApplicationAdapter {
 		batch = new SpriteBatch();
 		stage.addActor(myActor);
 
-		Skin skin = new Skin();
-		Pixmap toggleButtonPixmap = new Pixmap(200, 30, Pixmap.Format.RGBA8888);
-		toggleButtonPixmap.drawRectangle(10, 10, 200, 30);
-		skin.add("green", new Texture(toggleButtonPixmap));
-//		skin.add("default", font);
-		ProgressBar bar = new ProgressBar(0, 1, .001f, true, skin);
-		bar.setSize(200, 500);
-		bar.setPosition(10, 10);
-		bar.setSize(290, bar.getPrefHeight());
-		bar.setAnimateDuration(2);
-		stage.addActor(bar);
+		init();
+		loading();
 	}
 
 	@Override
 	public void render () {
-		Gdx.gl.glClearColor(0, 1, 1, 1);
+		float delta = Gdx.graphics.getDeltaTime();
+		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+		update(delta);
+
 		batch.begin();
+			bar.draw(batch, 1);
 		batch.end();
 	}
 	
@@ -65,5 +61,31 @@ public class NotAClicker extends ApplicationAdapter {
 
 	public void resize(int width, int height) {
 		viewport.update(width, height);
+	}
+
+	public void update(float delta) {
+		bar.setValue((bar.getValue()+2));
+		bar.act(delta);
+	}
+
+	public void init() {
+		//	Loading
+		Skin skin = new Skin();
+		Pixmap yellowBar = new Pixmap(100, 20, Pixmap.Format.RGBA8888);
+		yellowBar.setColor(Color.YELLOW);
+		yellowBar.fill();
+		skin.add("yellow", new Texture(yellowBar));
+		TextureRegionDrawable textureBar = new TextureRegionDrawable(new TextureRegion(new Texture(yellowBar)));
+		barStyle = new ProgressBar.ProgressBarStyle(skin.newDrawable("yellow", Color.BLACK), textureBar);
+		barStyle.knobBefore = barStyle.knob;
+
+		//
+	}
+
+	public void loading() {
+		bar = new ProgressBar(0, 100, 0.5f, false, barStyle);
+		bar.setColor(Color.WHITE);
+		bar.setSize(Gdx.graphics.getWidth(), bar.getPrefHeight());
+		bar.setPosition(Gdx.graphics.getWidth()/2-bar.getWidth()/2, Gdx.graphics.getHeight()-bar.getHeight());
 	}
 }
