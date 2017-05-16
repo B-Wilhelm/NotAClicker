@@ -31,11 +31,9 @@ public class NotAClicker extends ApplicationAdapter {
 	@Override
 	public void create () {
 		Stage stage = new Stage();
-		Actor myActor = new Actor();
 		Camera camera = new PerspectiveCamera();
 		viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), camera);
 		batch = new SpriteBatch();
-		stage.addActor(myActor);
 
 		init();
 		loading();
@@ -44,13 +42,13 @@ public class NotAClicker extends ApplicationAdapter {
 	@Override
 	public void render () {
 		float delta = Gdx.graphics.getDeltaTime();
-		Gdx.gl.glClearColor(0, 0, 0, 1);
+		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		update(delta);
 
 		batch.begin();
-			bar.draw(batch, 1);
+			if(!bar.isDisabled()) bar.draw(batch,1);
 		batch.end();
 	}
 	
@@ -64,8 +62,13 @@ public class NotAClicker extends ApplicationAdapter {
 	}
 
 	public void update(float delta) {
+
+		// Loading
+		if(bar.getValue() >= 100) bar.setDisabled(true);
 		bar.setValue((bar.getValue()+2));
 		bar.act(delta);
+
+
 	}
 
 	public void init() {
@@ -78,6 +81,8 @@ public class NotAClicker extends ApplicationAdapter {
 		TextureRegionDrawable textureBar = new TextureRegionDrawable(new TextureRegion(new Texture(yellowBar)));
 		barStyle = new ProgressBar.ProgressBarStyle(skin.newDrawable("yellow", Color.BLACK), textureBar);
 		barStyle.knobBefore = barStyle.knob;
+		bar = new ProgressBar(0, 0, 1, false, barStyle);
+		bar.setDisabled(true);
 
 		//
 	}
@@ -87,5 +92,6 @@ public class NotAClicker extends ApplicationAdapter {
 		bar.setColor(Color.WHITE);
 		bar.setSize(Gdx.graphics.getWidth(), bar.getPrefHeight());
 		bar.setPosition(Gdx.graphics.getWidth()/2-bar.getWidth()/2, Gdx.graphics.getHeight()-bar.getHeight());
+		bar.setDisabled(false);
 	}
 }
