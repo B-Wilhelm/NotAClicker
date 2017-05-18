@@ -1,6 +1,7 @@
 package com.wilhelm.notaclicker;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
@@ -8,54 +9,64 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+
+import java.awt.Font;
 
 /**
  * @author Brett_W
  */
 
 public class MainMenuScreen implements Screen {
+    private MiscFunc mF = new MiscFunc();
     private final NotAClicker game;
     private SpriteBatch batch;
     private Viewport viewport;
-    private ProgressBar bar;
-    private ProgressBar.ProgressBarStyle barStyle;
+    private FreeTypeFontGenerator generator;
+    private Stage stage;
 
     public MainMenuScreen(final NotAClicker game) {
         this.game = game;
 
-        Stage stage = new Stage();
+        stage = new Stage();
         Camera camera = new PerspectiveCamera();
         viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), camera);
         batch = new SpriteBatch();
 
         init();
-        loading();
         Gdx.input.setInputProcessor(stage);
     }
 
     @Override
     public void render (float delta) {
-        Gdx.gl.glClearColor(1, 0, 1, 1);
+        Gdx.gl.glClearColor(44f/255f, 182f/255f, 216f/255f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         update(delta);
 
         batch.begin();
-            if(!bar.isDisabled()) bar.draw(batch,1);
         batch.end();
+
+        stage.act(delta);
+        stage.draw();
     }
 
     @Override
     public void dispose () {
         batch.dispose();
+        generator.dispose();
     }
 
     @Override
@@ -78,60 +89,83 @@ public class MainMenuScreen implements Screen {
 
     }
 
+    @Override
     public void resize(int width, int height) {
         viewport.update(width, height);
     }
 
-    public void update(float delta) {
-
-        // Loading
-        if(bar.getValue() >= 100) bar.setDisabled(true);
-        bar.setValue((bar.getValue()+2));
-        bar.act(delta);
-
+    private void update(float delta) {
+        //
 
     }
 
-    public void init() {
-        // Loading
-        Skin skin = new Skin();
-        Pixmap yellowBar = new Pixmap(100, 20, Pixmap.Format.RGBA8888);
-        yellowBar.setColor(Color.YELLOW);
-        yellowBar.fill();
-        skin.add("yellow", new Texture(yellowBar));
-        TextureRegionDrawable textureBar = new TextureRegionDrawable(new TextureRegion(new Texture(yellowBar)));
-        barStyle = new ProgressBar.ProgressBarStyle(skin.newDrawable("yellow", Color.BLACK), textureBar);
-        barStyle.knobBefore = barStyle.knob;
-        bar = new ProgressBar(0, 0, 1, false, barStyle);
-        bar.setDisabled(true);
+    private void init() {
+        final int menuButtonSizeX = 500, menuButtonSizeY = 180;
+        Color blu = new Color(44f/255f, 182f/255f, 216f/255f, 1);
 
         // Main Menu
+        generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/ubuntu_bold.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 75;
+        BitmapFont font = generator.generateFont(parameter);
+        Skin buttonSkin = new Skin();
+        Pixmap buttonPixmap = mF.fillLayeredRoundedRectangle(Color.YELLOW, 0, 0, menuButtonSizeX, menuButtonSizeY, 40);
+        buttonSkin.add("yellow", new Texture(buttonPixmap));
+        buttonSkin.add("default", font);
+        TextButton.TextButtonStyle buttonStyle = new TextButton.TextButtonStyle();
+        buttonStyle.fontColor = blu;
+        buttonStyle.up = buttonSkin.newDrawable("yellow", Color.YELLOW);
+        buttonStyle.down = buttonSkin.newDrawable("yellow", Color.DARK_GRAY);
+        buttonStyle.font = buttonSkin.getFont("default");
+        buttonSkin.add("default", buttonStyle);
 
-    }
-
-    private void roundedRect(Pixmap toggleButtonPixmap, Color c, int x, int y, int width, int height, int radius){
-        // Central rectangle
-        toggleButtonPixmap.setColor(c);
-        toggleButtonPixmap.fillRectangle(x + radius, y + radius, width - 2*radius, height - 2*radius);
-
-        // Four side rectangles, in clockwise order
-        toggleButtonPixmap.fillRectangle(x + radius, y, width - 2*radius, radius);
-        toggleButtonPixmap.fillRectangle(x + width - radius, y + radius, radius, height - 2*radius);
-        toggleButtonPixmap.fillRectangle(x + radius, y + height - radius, width - 2*radius, radius);
-        toggleButtonPixmap.fillRectangle(x, y + radius, radius, height - 2*radius);
-
-        // Four arches, clockwise too
-        toggleButtonPixmap.fillCircle(x + radius, y + radius, radius);
-        toggleButtonPixmap.fillCircle(x + width - radius, y + radius, radius);
-        toggleButtonPixmap.fillCircle(x + width - radius, y + height - radius, radius);
-        toggleButtonPixmap.fillCircle(x + radius, y + height - radius, radius);
-    }
-
-    public void loading() {
-        bar = new ProgressBar(0, 100, 0.5f, false, barStyle);
-        bar.setColor(Color.WHITE);
-        bar.setSize(Gdx.graphics.getWidth(), bar.getPrefHeight());
-        bar.setPosition(Gdx.graphics.getWidth()/2-bar.getWidth()/2, Gdx.graphics.getHeight()-bar.getHeight());
-        bar.setDisabled(false);
+        TextButton main1 = new TextButton("", buttonSkin);
+        main1.setText("New Game");
+        main1.setPosition(Gdx.graphics.getWidth()/2-main1.getWidth()/2, Gdx.graphics.getHeight()*4/9-main1.getHeight()/2);
+        main1.addListener(new InputListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                return true;
+            }
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {  }
+        });
+        stage.addActor(main1);
+        TextButton main2 = new TextButton("", buttonSkin);
+        main2.setText("Load");
+        main2.setPosition(Gdx.graphics.getWidth()/2-main2.getWidth()/2, Gdx.graphics.getHeight()*3/9-main2.getHeight()/2);
+        main2.addListener(new InputListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                return true;
+            }
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {  }
+        });
+        stage.addActor(main2);
+        TextButton main3 = new TextButton("", buttonSkin);
+        main3.setText("Options");
+        main3.setPosition(Gdx.graphics.getWidth()/2-main3.getWidth()/2, Gdx.graphics.getHeight()*2/9-main3.getHeight()/2);
+        main3.addListener(new InputListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                return true;
+            }
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {  }
+        });
+        stage.addActor(main3);
+        TextButton main4 = new TextButton("", buttonSkin);
+        main4.setText("Quit");
+        main4.setPosition(Gdx.graphics.getWidth()/2-main4.getWidth()/2, Gdx.graphics.getHeight()/9-main4.getHeight()/2);
+        main4.addListener(new InputListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                return true;
+            }
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {  }
+        });
+        stage.addActor(main4);
     }
 }
