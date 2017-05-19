@@ -23,8 +23,8 @@ import com.badlogic.gdx.utils.viewport.Viewport;
  */
 
 public class NotAClicker extends Game {
-	public SpriteBatch batch;
-	public BitmapFont font;
+	private SpriteBatch batch;
+	private BitmapFont font;
 
 	public void create() {
 		batch = new SpriteBatch();
