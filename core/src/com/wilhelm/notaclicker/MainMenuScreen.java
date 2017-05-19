@@ -122,7 +122,9 @@ class MainMenuScreen implements Screen {
             menuButtons.get(i).setPosition(Gdx.graphics.getWidth()/2-menuButtons.get(i).getWidth()/2, initButtonPos-(Gdx.graphics.getHeight()*i/9)-menuButtons.get(i).getHeight());
             menuButtons.get(i).addListener(new InputListener() {
                 @Override
-                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) { return true; }
+                @Override
+                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                     switch(index) {
                         case 0:
                             game.setScreen(new GameScreen(game));
@@ -136,10 +138,7 @@ class MainMenuScreen implements Screen {
                         default:
                             break;
                     }
-                    return true;
                 }
-                @Override
-                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {  }
             });
             stage.addActor(menuButtons.get(i));
         }

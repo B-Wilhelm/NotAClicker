@@ -1,20 +1,37 @@
 package com.wilhelm.notaclicker;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 /**
  * Created by Brett_W on 5/17/2017.
  */
 
-public class MiscFunc {
+class MiscFunc {
     private Pixmap drawnShape;
 
-    public MiscFunc() {
+    MiscFunc() {
 
     }
 
-    public void fillRoundedRectangle(Color c, int x, int y, int width, int height, int radius) {
+    void renderLayeredShape(ShapeRenderer s, Color c1, Color c2, int x, int y, int width, int height, int thickness) {
+        s.begin(ShapeRenderer.ShapeType.Filled);
+        s.setColor(c1);
+        s.rect(x, y, thickness, height);
+        s.rect(x+thickness, y, width-thickness, thickness);
+        s.rect(x+width-thickness, y+thickness, thickness, height-thickness);
+        s.rect(x+thickness, y+height-thickness, width-thickness, thickness);
+        s.end();
+
+        s.begin(ShapeRenderer.ShapeType.Filled);
+        s.setColor(c2);
+        s.rect(x+thickness, y+thickness, width-(thickness*2), height-(thickness*2));
+        s.end();
+    }
+
+    private void fillRoundedRectangle(Color c, int x, int y, int width, int height, int radius) {
         drawnShape = new Pixmap(width, height, Pixmap.Format.RGBA8888);
 
         // Central rectangle
@@ -34,7 +51,7 @@ public class MiscFunc {
         drawnShape.fillCircle(x + radius, y + height - radius, radius);
     }
 
-    public void fillLayeredRoundedRectangle(Color c1, Color c2, int x, int y, int width, int height, int radius) {
+    void fillLayeredRoundedRectangle(Color c1, Color c2, int x, int y, int width, int height, int radius) {
         fillRoundedRectangle(c1, x, y, width, height, radius);
 
         x += 12;
@@ -59,7 +76,7 @@ public class MiscFunc {
         drawnShape.fillCircle(x + radius, y + height - radius, radius);
     }
 
-    public Pixmap getPixmap() {
+    Pixmap getPixmap() {
         return drawnShape;
     }
 }
