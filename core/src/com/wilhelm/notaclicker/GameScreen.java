@@ -1,5 +1,6 @@
 package com.wilhelm.notaclicker;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Camera;
@@ -22,11 +23,11 @@ import com.badlogic.gdx.utils.viewport.Viewport;
  */
 
 public class GameScreen implements Screen {
-    private final NotAClicker game;
+    private Game game;
     private SpriteBatch batch;
     private Viewport viewport;
 
-    public GameScreen(final NotAClicker game) {
+    public GameScreen(Game game) {
         this.game = game;
 
         Stage stage = new Stage();

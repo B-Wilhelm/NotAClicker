@@ -29,8 +29,8 @@ import java.util.ArrayList;
  */
 
 public class MainMenuScreen implements Screen {
-    private Game game;
     private MiscFunc mF = new MiscFunc();
+    private Game game;
     private SpriteBatch batch;
     private Viewport viewport;
     private FreeTypeFontGenerator generator;
@@ -94,7 +94,6 @@ public class MainMenuScreen implements Screen {
 
     private void update(float delta) {
         //
-
     }
 
     private void init() {
@@ -133,6 +132,7 @@ public class MainMenuScreen implements Screen {
                 public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                     switch(index) {
                         case 0:
+                            game.setScreen(new GameScreen(game));
                             break;
                         case 1:
                             break;
