@@ -28,20 +28,17 @@ import java.util.ArrayList;
  * @author Brett_W
  */
 
-public class MainMenuScreen implements Screen {
+class MainMenuScreen implements Screen {
     private MiscFunc mF = new MiscFunc();
     private Game game;
-    private SpriteBatch batch;
     private Viewport viewport;
-    private FreeTypeFontGenerator generator;
     private Stage stage;
 
-    public MainMenuScreen(Game game) {
+    MainMenuScreen(Game game) {
         this.game = game;
         stage = new Stage();
         Camera camera = new PerspectiveCamera();
         viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), camera);
-        batch = new SpriteBatch();
 
         init();
         Gdx.input.setInputProcessor(stage);
@@ -52,10 +49,7 @@ public class MainMenuScreen implements Screen {
         Gdx.gl.glClearColor(44f/255f, 182f/255f, 216f/255f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        update(delta);
-
-        batch.begin();
-        batch.end();
+        update();
 
         stage.act(delta);
         stage.draw();
@@ -63,8 +57,7 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void dispose () {
-        batch.dispose();
-        generator.dispose();
+
     }
 
     @Override
@@ -92,8 +85,8 @@ public class MainMenuScreen implements Screen {
         viewport.update(width, height);
     }
 
-    private void update(float delta) {
-        //
+    private void update() {
+
     }
 
     private void init() {
@@ -102,7 +95,7 @@ public class MainMenuScreen implements Screen {
         Color blu = new Color(44f/255f, 182f/255f, 216f/255f, 1);
 
         // Main Menu
-        generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/ubuntu_bold.ttf"));
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/ubuntu_bold.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 75;
         BitmapFont font = generator.generateFont(parameter);
@@ -155,5 +148,9 @@ public class MainMenuScreen implements Screen {
         menuButtons.get(1).setText("Load Game");
         menuButtons.get(2).setText("Options");
         menuButtons.get(3).setText("Quit Game");
+
+        generator.dispose();
+        buttonPixmap.dispose();
+        pushButtonPixmap.dispose();
     }
 }
