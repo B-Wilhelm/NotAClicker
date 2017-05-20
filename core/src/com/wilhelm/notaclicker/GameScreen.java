@@ -88,7 +88,7 @@ class GameScreen implements Screen {
         final int lineThickness = 10;
 
         ShapeRenderer sR = new ShapeRenderer();
-        timeBar = new TimeBar(sR, Color.BLACK, yellow, 0, Gdx.graphics.getHeight()*9/10-lineThickness, upperDisplayWidth, displayHeight, lineThickness);
+        timeBar = new TimeBar(sR, Color.BLACK, yellow, 0, Gdx.graphics.getHeight()*9/10, upperDisplayWidth, displayHeight, lineThickness);
         playerBar = new PlayerBar(sR, Color.BLACK, yellow, 0, 0, lowerDisplayWidth, displayHeight, lineThickness);
         gameBar = new GameBar(sR, Color.BLACK, yellow, lowerDisplayWidth, 0, lowerDisplayWidth, displayHeight, lineThickness);
     }
@@ -123,14 +123,14 @@ class GameScreen implements Screen {
         void drawShape() {
             s.begin(ShapeRenderer.ShapeType.Filled);
             s.setColor(c1);
-            s.rect(x+thickness, y, width-(thickness*2), (thickness*2));    // Bottom Side
-            s.rect(x, y, thickness, (thickness*2));    // Bottom Left Corner
-            s.rect(x+width-thickness, y, thickness, (thickness*2));    // Bottom Right Corner
+            s.rect(x+thickness, y, width-(thickness*2), thickness);    // Bottom Side
+            s.rect(x, y, thickness, thickness);    // Bottom Left Corner
+            s.rect(x+width-thickness, y, thickness, thickness);    // Bottom Right Corner
             s.end();
 
             s.begin(ShapeRenderer.ShapeType.Filled);    // Inner Shape
             s.setColor(c2);
-            s.rect(x, y+(thickness*2), width, height-thickness);
+            s.rect(x, y+thickness, width, height-thickness);
             s.end();
         }
     }
@@ -154,16 +154,16 @@ class GameScreen implements Screen {
         void drawShape() {
             s.begin(ShapeRenderer.ShapeType.Filled);
             s.setColor(c1);
-            s.rect(x+width-thickness, y+thickness, thickness, height-(thickness*2));    // Right Side
-            s.rect(x+thickness, y+height-thickness, width-(thickness*2), (thickness*2));    // Top Side
-            s.rect(x+width-thickness, y, thickness, thickness);    // Bottom Right Corner
-            s.rect(x, y+height-thickness, thickness, (thickness*2));    // Top Left Corner
-            s.rect(x+width-thickness, y+height-thickness, thickness, (thickness*2));    // Top Right Corner
+            s.rect(x+width-(thickness/2), y+thickness, thickness/2, height-(thickness*2));    // Right Side
+            s.rect(x+thickness, y+height-thickness, width-thickness, thickness);    // Top Side
+            s.rect(x+width-(thickness/2), y, thickness/2, thickness);    // Bottom Right Corner
+            s.rect(x, y+height-thickness, thickness, thickness);    // Top Left Corner
+            s.rect(x+width-(thickness/2), y+height-thickness, thickness/2, thickness);    // Top Right Corner
             s.end();
 
             s.begin(ShapeRenderer.ShapeType.Filled);    // Inner Shape
             s.setColor(c2);
-            s.rect(x, y, width-thickness, height-thickness);
+            s.rect(x, y, width-(thickness/2), height-thickness);
             s.end();
         }
     }
@@ -187,16 +187,16 @@ class GameScreen implements Screen {
         void drawShape() {
             s.begin(ShapeRenderer.ShapeType.Filled);
             s.setColor(c1);
-            s.rect(x, y+thickness, thickness, height-(thickness*2));    // Left Side
-            s.rect(x+thickness, y+height-thickness, width-(thickness*2), (thickness*2));    // Top Side
-            s.rect(x, y, thickness, thickness);    // Bottom Left Corner
-            s.rect(x, y+height-thickness, thickness, (thickness*2));    // Top Left Corner
-            s.rect(x+width-thickness, y+height-thickness, thickness, (thickness*2));    // Top Right Corner
+            s.rect(x, y+thickness, thickness/2, height-(thickness*2));    // Left Side
+            s.rect(x+thickness/2, y+height-thickness, width-thickness, thickness);    // Top Side
+            s.rect(x, y, thickness/2, thickness);    // Bottom Left Corner
+            s.rect(x, y+height-thickness, thickness/2, thickness);    // Top Left Corner
+            s.rect(x+width-thickness, y+height-thickness, thickness, thickness);    // Top Right Corner
             s.end();
 
             s.begin(ShapeRenderer.ShapeType.Filled);    // Inner Shape
             s.setColor(c2);
-            s.rect(x+thickness, y, width-thickness, height-thickness);
+            s.rect(x+thickness/2, y, width-(thickness/2), height-thickness);
             s.end();
         }
     }
