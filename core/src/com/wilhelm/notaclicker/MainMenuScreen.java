@@ -133,6 +133,7 @@ class MainMenuScreen implements Screen {
                         case 1:
                             break;
                         case 2:
+                            game.setScreen(new OptionsScreen(game));
                             break;
                         case 3:
                             Gdx.app.exit();
