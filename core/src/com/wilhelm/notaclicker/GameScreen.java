@@ -13,6 +13,8 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import java.sql.Time;
+
 /**
  * @author Brett_W
  */
@@ -22,6 +24,9 @@ class GameScreen implements Screen {
     private Game game;
     private Stage stage;
     private Viewport viewport;
+    private TimeBar timeBar;
+    private PlayerBar playerBar;
+    private GameBar gameBar;
 
     GameScreen(Game game) {
         this.game = game;
@@ -75,25 +80,124 @@ class GameScreen implements Screen {
         viewport.update(width, height);
     }
 
+    private void init() {
+        Color yellow = new Color(240, 240, 0, 1);
+        int upperDisplayWidth = Gdx.graphics.getWidth();
+        int displayHeight = Gdx.graphics.getHeight()/10;
+        int lowerDisplayWidth = Gdx.graphics.getWidth()/2;
+        final int lineThickness = 10;
+
+        ShapeRenderer sR = new ShapeRenderer();
+        timeBar = new TimeBar(sR, Color.BLACK, yellow, 0, Gdx.graphics.getHeight()*9/10-lineThickness, upperDisplayWidth, displayHeight, lineThickness);
+        playerBar = new PlayerBar(sR, Color.BLACK, yellow, 0, 0, lowerDisplayWidth, displayHeight, lineThickness);
+        gameBar = new GameBar(sR, Color.BLACK, yellow, lowerDisplayWidth, 0, lowerDisplayWidth, displayHeight, lineThickness);
+    }
+
     private void update() {
 
     }
 
-    private void init() {
-        // Main Menu
+    private void createOverlay() {
+        timeBar.drawShape();
+        playerBar.drawShape();
+        gameBar.drawShape();
 
     }
 
-    private void createOverlay() {
-        int upperDisplayWidth = Gdx.graphics.getWidth();
-        int upperDisplayHeight = Gdx.graphics.getHeight()/10;
-        int lowerLeftDisplayWidth = Gdx.graphics.getWidth()/2;
-        int lowerLeftDisplayHeight = Gdx.graphics.getHeight()/10;
+    private class TimeBar {
+        private ShapeRenderer s;
+        private Color c1, c2;
+        private int x, y, width, height, thickness;
 
-        ShapeRenderer sR = new ShapeRenderer();
-        mF.renderLayeredShape(sR, Color.BLACK, Color.WHITE, 0, Gdx.graphics.getHeight()*9/10, upperDisplayWidth, upperDisplayHeight, 10);
-        mF.renderLayeredShape(sR, Color.BLACK, Color.WHITE, 0, 0, lowerLeftDisplayWidth, lowerLeftDisplayHeight, 10);
-        mF.renderLayeredShape(sR, Color.BLACK, Color.WHITE, lowerLeftDisplayWidth, 0, lowerLeftDisplayWidth, lowerLeftDisplayHeight, 10);
+        private TimeBar(ShapeRenderer s, Color c1, Color c2, int x, int y, int width, int height, int thickness) {
+            this.s = s;
+            this.c1 = c1;
+            this.c2 = c2;
+            this.x = x;
+            this.y = y;
+            this.width = width;
+            this.height = height;
+            this.thickness = thickness;
+        }
 
+        void drawShape() {
+            s.begin(ShapeRenderer.ShapeType.Filled);
+            s.setColor(c1);
+            s.rect(x+thickness, y, width-(thickness*2), (thickness*2));    // Bottom Side
+            s.rect(x, y, thickness, (thickness*2));    // Bottom Left Corner
+            s.rect(x+width-thickness, y, thickness, (thickness*2));    // Bottom Right Corner
+            s.end();
+
+            s.begin(ShapeRenderer.ShapeType.Filled);    // Inner Shape
+            s.setColor(c2);
+            s.rect(x, y+(thickness*2), width, height-thickness);
+            s.end();
+        }
+    }
+
+    private class PlayerBar {
+        private ShapeRenderer s;
+        private Color c1, c2;
+        private int x, y, width, height, thickness;
+
+        private PlayerBar(ShapeRenderer s, Color c1, Color c2, int x, int y, int width, int height, int thickness) {
+            this.s = s;
+            this.c1 = c1;
+            this.c2 = c2;
+            this.x = x;
+            this.y = y;
+            this.width = width;
+            this.height = height;
+            this.thickness = thickness;
+        }
+
+        void drawShape() {
+            s.begin(ShapeRenderer.ShapeType.Filled);
+            s.setColor(c1);
+            s.rect(x+width-thickness, y+thickness, thickness, height-(thickness*2));    // Right Side
+            s.rect(x+thickness, y+height-thickness, width-(thickness*2), (thickness*2));    // Top Side
+            s.rect(x+width-thickness, y, thickness, thickness);    // Bottom Right Corner
+            s.rect(x, y+height-thickness, thickness, (thickness*2));    // Top Left Corner
+            s.rect(x+width-thickness, y+height-thickness, thickness, (thickness*2));    // Top Right Corner
+            s.end();
+
+            s.begin(ShapeRenderer.ShapeType.Filled);    // Inner Shape
+            s.setColor(c2);
+            s.rect(x, y, width-thickness, height-thickness);
+            s.end();
+        }
+    }
+
+    private class GameBar {
+        private ShapeRenderer s;
+        private Color c1, c2;
+        private int x, y, width, height, thickness;
+
+        private GameBar(ShapeRenderer s, Color c1, Color c2, int x, int y, int width, int height, int thickness) {
+            this.s = s;
+            this.c1 = c1;
+            this.c2 = c2;
+            this.x = x;
+            this.y = y;
+            this.width = width;
+            this.height = height;
+            this.thickness = thickness;
+        }
+
+        void drawShape() {
+            s.begin(ShapeRenderer.ShapeType.Filled);
+            s.setColor(c1);
+            s.rect(x, y+thickness, thickness, height-(thickness*2));    // Left Side
+            s.rect(x+thickness, y+height-thickness, width-(thickness*2), (thickness*2));    // Top Side
+            s.rect(x, y, thickness, thickness);    // Bottom Left Corner
+            s.rect(x, y+height-thickness, thickness, (thickness*2));    // Top Left Corner
+            s.rect(x+width-thickness, y+height-thickness, thickness, (thickness*2));    // Top Right Corner
+            s.end();
+
+            s.begin(ShapeRenderer.ShapeType.Filled);    // Inner Shape
+            s.setColor(c2);
+            s.rect(x+thickness, y, width-thickness, height-thickness);
+            s.end();
+        }
     }
 }

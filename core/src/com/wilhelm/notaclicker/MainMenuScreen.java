@@ -93,6 +93,7 @@ class MainMenuScreen implements Screen {
         final int menuButtonSizeX = 500, menuButtonSizeY = 180;
         int initButtonPos = Gdx.graphics.getHeight()*4/9;
         Color blu = new Color(44f/255f, 182f/255f, 216f/255f, 1);
+        Color yellow = new Color(240, 240, 0, 1);
 
         // Main Menu
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/ubuntu_bold.ttf"));
@@ -108,7 +109,7 @@ class MainMenuScreen implements Screen {
         buttonSkin.add("default", font);
         TextButton.TextButtonStyle buttonStyle = new TextButton.TextButtonStyle();
         buttonStyle.fontColor = Color.WHITE;
-        buttonStyle.downFontColor = Color.YELLOW;
+        buttonStyle.downFontColor = yellow;
         buttonStyle.up = buttonSkin.newDrawable("yellow", Color.WHITE);
         buttonStyle.down = buttonSkin.newDrawable(new TextureRegionDrawable(new TextureRegion(new Texture(pushButtonPixmap))));
         buttonStyle.font = buttonSkin.getFont("default");
@@ -134,6 +135,7 @@ class MainMenuScreen implements Screen {
                         case 2:
                             break;
                         case 3:
+                            Gdx.app.exit();
                             break;
                         default:
                             break;
