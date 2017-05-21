@@ -9,8 +9,18 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
@@ -28,6 +38,8 @@ class GameScreen implements Screen {
     private TimeBar timeBar;
     private PlayerBar playerBar;
     private GameBar gameBar;
+    private Dialog exitDialog;
+    private boolean backBuffer;
 
     GameScreen(Game game) {
         this.game = game;
@@ -83,11 +95,45 @@ class GameScreen implements Screen {
     }
 
     private void init() {
+        backBuffer = false;
         Color yellow = new Color(240, 240, 0, 1);
         int upperDisplayWidth = Gdx.graphics.getWidth();
         int displayHeight = Gdx.graphics.getHeight()/10;
         int lowerDisplayWidth = Gdx.graphics.getWidth()/2;
         final int lineThickness = 10;
+
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/ubuntu_bold.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 32;
+        BitmapFont font = generator.generateFont(parameter);
+        Skin buttonSkin = new Skin();
+        Pixmap buttonPixmap = new Pixmap(40, 40, Pixmap.Format.RGBA8888);
+        buttonPixmap.setColor(Color.YELLOW);
+        buttonPixmap.fillRectangle(0, 0, 40, 40);
+        buttonSkin.add("yellow", new Texture(buttonPixmap));
+        buttonSkin.add("default", font);
+        Window.WindowStyle wS = new Window.WindowStyle();
+        wS.titleFont = font;
+        wS.titleFontColor = Color.BLACK;
+        wS.background = buttonSkin.newDrawable(new TextureRegionDrawable(new TextureRegion(new Texture(buttonPixmap))));
+        buttonSkin.add("default", wS);
+        Label.LabelStyle lS = new Label.LabelStyle();
+        lS.font = font;
+        lS.fontColor = Color.BLACK;
+        buttonSkin.add("default", lS);
+        TextButton.TextButtonStyle tS = new TextButton.TextButtonStyle();
+        tS.font = font;
+        tS.fontColor = Color.BLACK;
+        buttonSkin.add("default", tS);
+
+        exitDialog = new Dialog("Exit?", buttonSkin){
+            public void result(Object obj) {
+                if(obj.equals(true)) {
+                    game.setScreen(new MainMenuScreen(game));
+                }
+                else { exitDialog.hide(); }
+            }
+        };
 
         ShapeRenderer sR = new ShapeRenderer();
         timeBar = new TimeBar(sR, Color.BLACK, yellow, 0, Gdx.graphics.getHeight()*9/10, upperDisplayWidth, displayHeight, lineThickness);
@@ -100,8 +146,15 @@ class GameScreen implements Screen {
     }
 
     private void onBackPressed() {
-        if (Gdx.input.isKeyPressed(Input.Keys.BACK)) {
-            game.setScreen(new MainMenuScreen(game));
+        if (Gdx.input.isKeyPressed(Input.Keys.BACK) && !backBuffer) {
+            exitDialog.text("Return to Main Menu?");
+            exitDialog.button("Yes", true); //sends "true" as the result
+            exitDialog.button("No", false);  //sends "false" as the result
+            exitDialog.show(stage);
+            backBuffer = true;
+        }
+        else if(backBuffer) {
+            backBuffer = false;
         }
     }
 
