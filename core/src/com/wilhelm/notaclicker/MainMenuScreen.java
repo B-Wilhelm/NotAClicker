@@ -2,6 +2,7 @@ package com.wilhelm.notaclicker;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
@@ -35,12 +36,13 @@ class MainMenuScreen implements Screen {
     private Stage stage;
 
     MainMenuScreen(Game game) {
-        this.game = game;
-        stage = new Stage();
         Camera camera = new PerspectiveCamera();
-        viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), camera);
+        this.game = game;
+        this.stage = new Stage();
+        this.viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), camera);
 
         init();
+        Gdx.input.setCatchBackKey(true);
         Gdx.input.setInputProcessor(stage);
     }
 
@@ -86,12 +88,19 @@ class MainMenuScreen implements Screen {
     }
 
     private void update() {
+        onBackPressed();
+    }
 
+    private void onBackPressed() {
+        if (Gdx.input.isKeyPressed(Input.Keys.BACK)) {
+            Gdx.app.exit();
+        }
     }
 
     private void init() {
         final int menuButtonSizeX = 500, menuButtonSizeY = 180;
         int initButtonPos = Gdx.graphics.getHeight()*4/9;
+        ArrayList<TextButton> menuButtons = new ArrayList<TextButton>();
         Color blu = new Color(44f/255f, 182f/255f, 216f/255f, 1);
         Color yellow = new Color(240, 240, 0, 1);
 
@@ -115,12 +124,10 @@ class MainMenuScreen implements Screen {
         buttonStyle.font = buttonSkin.getFont("default");
         buttonSkin.add("default", buttonStyle);
 
-        ArrayList<TextButton> menuButtons = new ArrayList<TextButton>();
-
         for(int i = 0; i < 4; i++) {
             final int index = i;
             menuButtons.add(i, new TextButton("", buttonSkin));
-            menuButtons.get(i).setPosition(Gdx.graphics.getWidth()/2-menuButtons.get(i).getWidth()/2, initButtonPos-(Gdx.graphics.getHeight()*i/9)-menuButtons.get(i).getHeight());
+            menuButtons.get(i).setPosition(Gdx.graphics.getWidth()/2-menuButtons.get(i).getWidth()/2, initButtonPos-(Gdx.graphics.getHeight()*i/9)-menuButtons.get(i).getHeight()/2);
             menuButtons.get(i).addListener(new InputListener() {
                 @Override
                 public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) { return true; }

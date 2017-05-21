@@ -2,6 +2,7 @@ package com.wilhelm.notaclicker;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
@@ -29,6 +30,7 @@ class OptionsScreen implements Screen {
         viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), camera);
 
         init();
+
         Gdx.input.setInputProcessor(stage);
     }
 
@@ -77,6 +79,12 @@ class OptionsScreen implements Screen {
     }
 
     private void update() {
+        onBackPressed();
+    }
 
+    private void onBackPressed() {
+        if (Gdx.input.isKeyPressed(Input.Keys.BACK)) {
+            game.setScreen(new MainMenuScreen(game));
+        }
     }
 }
