@@ -24,8 +24,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-import java.sql.Time;
-
 /**
  * @author Brett_W
  */
@@ -39,7 +37,10 @@ class GameScreen implements Screen {
     private PlayerBar playerBar;
     private GameBar gameBar;
     private Dialog exitDialog;
-    private boolean backBuffer;
+
+    private final int lineThickness = 10;
+    private Color blue = new Color(44f/255f, 182f/255f, 216f/255f, 1);
+    private Color yellow = new Color(240, 240, 0, 1);
 
     GameScreen(Game game) {
         this.game = game;
@@ -55,10 +56,11 @@ class GameScreen implements Screen {
 
     @Override
     public void render (float delta) {
+        onBackPressed();
+
         Gdx.gl.glClearColor(44f/255f, 182f/255f, 216f/255f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        update();
         createOverlay();
 
         stage.act(delta);
@@ -90,71 +92,76 @@ class GameScreen implements Screen {
 
     }
 
+    @Override
     public void resize(int width, int height) {
         viewport.update(width, height);
     }
 
     private void init() {
-        backBuffer = false;
-        Color yellow = new Color(240, 240, 0, 1);
-        int upperDisplayWidth = Gdx.graphics.getWidth();
-        int displayHeight = Gdx.graphics.getHeight()/10;
-        int lowerDisplayWidth = Gdx.graphics.getWidth()/2;
-        final int lineThickness = 10;
+        createDialog();
 
+        ShapeRenderer sR = new ShapeRenderer();
+        timeBar = new TimeBar(sR, Color.BLACK, yellow, 0, Gdx.graphics.getHeight()*19/20, Gdx.graphics.getWidth(), Gdx.graphics.getHeight()/20, lineThickness);
+        playerBar = new PlayerBar(sR, Color.BLACK, yellow, 0, 0, Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/13, lineThickness);
+        gameBar = new GameBar(sR, Color.BLACK, yellow, Gdx.graphics.getWidth()/2, 0, Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/13, lineThickness);
+    }
+
+    private void createDialog() {
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/ubuntu_bold.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 32;
+        parameter.size = 84;
         BitmapFont font = generator.generateFont(parameter);
-        Skin buttonSkin = new Skin();
-        Pixmap buttonPixmap = new Pixmap(40, 40, Pixmap.Format.RGBA8888);
-        buttonPixmap.setColor(Color.YELLOW);
-        buttonPixmap.fillRectangle(0, 0, 40, 40);
-        buttonSkin.add("yellow", new Texture(buttonPixmap));
-        buttonSkin.add("default", font);
+        parameter.size = 72;
+        BitmapFont exitButtonFont = generator.generateFont(parameter);
+        Skin dialogSkin = new Skin();
+
+        mF.fillLayeredRoundedRectangle(yellow, blue, 0, 0, Gdx.graphics.getWidth()*3/4, Gdx.graphics.getHeight()/4, 4, 24);
+        Pixmap dialogPixmap = mF.getPixmap();
+        mF.fillLayeredRoundedRectangle(yellow, blue, 0, 0, Gdx.graphics.getWidth()/4, Gdx.graphics.getHeight()/15, 32, 12);
+        Pixmap buttonPixmap = mF.getPixmap();
+
         Window.WindowStyle wS = new Window.WindowStyle();
         wS.titleFont = font;
-        wS.titleFontColor = Color.BLACK;
-        wS.background = buttonSkin.newDrawable(new TextureRegionDrawable(new TextureRegion(new Texture(buttonPixmap))));
-        buttonSkin.add("default", wS);
+        wS.titleFontColor = yellow;
+        wS.background = dialogSkin.newDrawable(new TextureRegionDrawable(new TextureRegion(new Texture(dialogPixmap))));
+        dialogSkin.add("default", wS);
         Label.LabelStyle lS = new Label.LabelStyle();
         lS.font = font;
-        lS.fontColor = Color.BLACK;
-        buttonSkin.add("default", lS);
+        lS.fontColor = Color.WHITE;
+        dialogSkin.add("default", lS);
         TextButton.TextButtonStyle tS = new TextButton.TextButtonStyle();
-        tS.font = font;
-        tS.fontColor = Color.BLACK;
-        buttonSkin.add("default", tS);
+        tS.font = exitButtonFont;
+        tS.fontColor = Color.WHITE;
+        tS.downFontColor = yellow;
+        tS.checkedFontColor = yellow;
+        tS.up = dialogSkin.newDrawable(new TextureRegionDrawable(new TextureRegion(new Texture(buttonPixmap))));
+        tS.down = dialogSkin.newDrawable(new TextureRegionDrawable(new TextureRegion(new Texture(buttonPixmap))));
+        tS.over = dialogSkin.newDrawable(new TextureRegionDrawable(new TextureRegion(new Texture(buttonPixmap))));
+        dialogSkin.add("default", tS);
 
-        exitDialog = new Dialog("Exit?", buttonSkin){
+        exitDialog = new Dialog("", dialogSkin){
             public void result(Object obj) {
                 if(obj.equals(true)) {
+                    exitDialog.hide();
                     game.setScreen(new MainMenuScreen(game));
                 }
-                else { exitDialog.hide(); }
+                else {
+                    exitDialog.hide();
+                }
             }
         };
 
-        ShapeRenderer sR = new ShapeRenderer();
-        timeBar = new TimeBar(sR, Color.BLACK, yellow, 0, Gdx.graphics.getHeight()*9/10, upperDisplayWidth, displayHeight, lineThickness);
-        playerBar = new PlayerBar(sR, Color.BLACK, yellow, 0, 0, lowerDisplayWidth, displayHeight, lineThickness);
-        gameBar = new GameBar(sR, Color.BLACK, yellow, lowerDisplayWidth, 0, lowerDisplayWidth, displayHeight, lineThickness);
-    }
-
-    private void update() {
-        onBackPressed();
+        exitDialog.text("Return to Main Menu?");
+        exitDialog.button("Yes", true); // sends "true" as the result
+        exitDialog.button("No", false); // sends "false" as the result
+        exitDialog.getButtonTable().padBottom(Gdx.graphics.getHeight()/25);
+        exitDialog.getButtonTable().getCells().get(0).padRight(Gdx.graphics.getWidth()/42);
+        exitDialog.getButtonTable().getCells().get(1).padLeft(Gdx.graphics.getWidth()/42);
     }
 
     private void onBackPressed() {
-        if (Gdx.input.isKeyPressed(Input.Keys.BACK) && !backBuffer) {
-            exitDialog.text("Return to Main Menu?");
-            exitDialog.button("Yes", true); //sends "true" as the result
-            exitDialog.button("No", false);  //sends "false" as the result
+        if (Gdx.input.isKeyJustPressed(Input.Keys.BACK)) {
             exitDialog.show(stage);
-            backBuffer = true;
-        }
-        else if(backBuffer) {
-            backBuffer = false;
         }
     }
 
