@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
@@ -16,16 +17,19 @@ import com.badlogic.gdx.utils.viewport.Viewport;
  */
 
 class OptionsScreen implements Screen {
+    private MiscFunc mF;
     private Game game;
     private Stage stage;
     private Viewport viewport;
+    private Dialog exitDialog;
 
     OptionsScreen(Game game) {
-        this.game = game;
-
-        stage = new Stage();
         Camera camera = new PerspectiveCamera();
-        viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), camera);
+        this.game = game;
+        this.mF = new MiscFunc();
+        this.stage = new Stage();
+        this.viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), camera);
+        this.exitDialog = mF.createDialog(game, "Exit to Main Menu?", "main");
 
         init();
 
@@ -37,7 +41,7 @@ class OptionsScreen implements Screen {
         Gdx.gl.glClearColor(44f/255f, 182f/255f, 216f/255f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        update();
+        onBackPressed();
 
         stage.act(delta);
         stage.draw();
@@ -74,10 +78,6 @@ class OptionsScreen implements Screen {
 
     private void init() {
 
-    }
-
-    private void update() {
-        onBackPressed();
     }
 
     private void onBackPressed() {

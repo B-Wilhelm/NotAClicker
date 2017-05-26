@@ -8,19 +8,9 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.Window;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
@@ -37,9 +27,6 @@ class GameScreen implements Screen {
     private PlayerBar playerBar;
     private GameBar gameBar;
     private Dialog exitDialog;
-
-    private final int lineThickness = 10;
-    private Color blue = new Color(44f/255f, 182f/255f, 216f/255f, 1);
     private Color yellow = new Color(240, 240, 0, 1);
 
     GameScreen(Game game) {
@@ -98,65 +85,13 @@ class GameScreen implements Screen {
     }
 
     private void init() {
-        createDialog();
+        final int lineThickness = 10;
 
         ShapeRenderer sR = new ShapeRenderer();
         timeBar = new TimeBar(sR, Color.BLACK, yellow, 0, Gdx.graphics.getHeight()*19/20, Gdx.graphics.getWidth(), Gdx.graphics.getHeight()/20, lineThickness);
         playerBar = new PlayerBar(sR, Color.BLACK, yellow, 0, 0, Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/13, lineThickness);
         gameBar = new GameBar(sR, Color.BLACK, yellow, Gdx.graphics.getWidth()/2, 0, Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/13, lineThickness);
-    }
-
-    private void createDialog() {
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/ubuntu_bold.ttf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 84;
-        BitmapFont font = generator.generateFont(parameter);
-        parameter.size = 72;
-        BitmapFont exitButtonFont = generator.generateFont(parameter);
-        Skin dialogSkin = new Skin();
-
-        mF.fillLayeredRoundedRectangle(yellow, blue, 0, 0, Gdx.graphics.getWidth()*3/4, Gdx.graphics.getHeight()/4, 4, 24);
-        Pixmap dialogPixmap = mF.getPixmap();
-        mF.fillLayeredRoundedRectangle(yellow, blue, 0, 0, Gdx.graphics.getWidth()/4, Gdx.graphics.getHeight()/15, 32, 12);
-        Pixmap buttonPixmap = mF.getPixmap();
-
-        Window.WindowStyle wS = new Window.WindowStyle();
-        wS.titleFont = font;
-        wS.titleFontColor = yellow;
-        wS.background = dialogSkin.newDrawable(new TextureRegionDrawable(new TextureRegion(new Texture(dialogPixmap))));
-        dialogSkin.add("default", wS);
-        Label.LabelStyle lS = new Label.LabelStyle();
-        lS.font = font;
-        lS.fontColor = Color.WHITE;
-        dialogSkin.add("default", lS);
-        TextButton.TextButtonStyle tS = new TextButton.TextButtonStyle();
-        tS.font = exitButtonFont;
-        tS.fontColor = Color.WHITE;
-        tS.downFontColor = yellow;
-        tS.checkedFontColor = yellow;
-        tS.up = dialogSkin.newDrawable(new TextureRegionDrawable(new TextureRegion(new Texture(buttonPixmap))));
-        tS.down = dialogSkin.newDrawable(new TextureRegionDrawable(new TextureRegion(new Texture(buttonPixmap))));
-        tS.over = dialogSkin.newDrawable(new TextureRegionDrawable(new TextureRegion(new Texture(buttonPixmap))));
-        dialogSkin.add("default", tS);
-
-        exitDialog = new Dialog("", dialogSkin){
-            public void result(Object obj) {
-                if(obj.equals(true)) {
-                    exitDialog.hide();
-                    game.setScreen(new MainMenuScreen(game));
-                }
-                else {
-                    exitDialog.hide();
-                }
-            }
-        };
-
-        exitDialog.text("Return to Main Menu?");
-        exitDialog.button("Yes", true); // sends "true" as the result
-        exitDialog.button("No", false); // sends "false" as the result
-        exitDialog.getButtonTable().padBottom(Gdx.graphics.getHeight()/25);
-        exitDialog.getButtonTable().getCells().get(0).padRight(Gdx.graphics.getWidth()/42);
-        exitDialog.getButtonTable().getCells().get(1).padLeft(Gdx.graphics.getWidth()/42);
+        exitDialog = mF.createDialog(game, "Exit to Main Menu?", "main");
     }
 
     private void onBackPressed() {
@@ -169,7 +104,6 @@ class GameScreen implements Screen {
         timeBar.drawShape();
         playerBar.drawShape();
         gameBar.drawShape();
-
     }
 
     private class TimeBar {
