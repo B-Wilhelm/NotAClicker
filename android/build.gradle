@@ -21,13 +21,6 @@ android {
         applicationId "com.wilhelm.notaclicker"
         minSdkVersion 24
         targetSdkVersion 25
-        jackOptions {
-            enabled true
-        }
-    }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
     }
     productFlavors {
     }

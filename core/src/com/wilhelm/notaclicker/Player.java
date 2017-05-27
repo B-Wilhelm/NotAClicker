@@ -4,7 +4,7 @@ package com.wilhelm.notaclicker;
  * @author Brett_W
  */
 
-public class Player {
+class Player {
     private String pName;   // Player Name
     private String bName;   // Business Name
     private int wallet;     // Player Money
@@ -12,13 +12,13 @@ public class Player {
     private int exp;        // Player Exp
     private int expBound;   // Exp required for lv up
 
-    public Player() {
-        this.pName = "test";
-        this.bName = "test";
-        this.wallet = -1;
-        this.level = -1;
-        this.exp = -1;
-        this.expBound = 1;
+    Player() {
+        this.pName = "Mattarod W";
+        this.bName = "Dillon Inc.";
+        this.wallet = 5000;
+        this.level = 0;
+        this.exp = 0;
+        this.expBound = 100;
     }
 
     public Player(String pName, String bName) {
@@ -52,23 +52,23 @@ public class Player {
     }
 
     ////////////////////////////////////////////// Getters
-    public String getpName() {
+    String getpName() {
         return pName;
     }
 
-    public String getbName() {
+    String getbName() {
         return bName;
     }
 
-    public int getMoney() {
+    int getMoney() {
         return wallet;
     }
 
-    public int getLevel() {
+    int getLevel() {
         return level;
     }
 
-    public int getExp() {
+    int getExp() {
         return exp;
     }
 

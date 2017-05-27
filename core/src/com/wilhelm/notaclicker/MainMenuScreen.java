@@ -50,69 +50,27 @@ class MainMenuScreen implements Screen {
         Gdx.input.setCatchBackKey(true);
     }
 
-    @Override
-    public void render (float delta) {
-        onBackPressed(stage);
-
-        Gdx.gl.glClearColor(44f/255f, 182f/255f, 216f/255f, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        stage.act(delta);
-        stage.draw();
-    }
-
-    @Override
-    public void dispose () {
-
-    }
-
-    @Override
-    public void hide() {
-
-    }
-
-    @Override
-    public void show() {
-
-    }
-
-    @Override
-    public void resume() {
-
-    }
-
-    @Override
-    public void pause() {
-
-    }
-
-    @Override
-    public void resize(int width, int height) {
-        viewport.update(width, height);
-    }
-
-    private void onBackPressed(Stage stage) {
-        if (Gdx.input.isKeyJustPressed(Input.Keys.BACK)) {
-            exitDialog.show(stage);
-        }
-    }
-
     private void init() {
-        final int menuButtonSizeX = 500, menuButtonSizeY = 180;
-        int initButtonPos = Gdx.graphics.getHeight()*4/9;
-        ArrayList<TextButton> menuButtons = new ArrayList<TextButton>();
-        Color blu = new Color(44f/255f, 182f/255f, 216f/255f, 1);
+        Color blue = new Color(44f/255f, 182f/255f, 216f/255f, 1);
         Color yellow = new Color(240, 240, 0, 1);
 
         // Main Menu
+        final int menuButtonSizeX = 500, menuButtonSizeY = 180;
+        int initButtonPos = Gdx.graphics.getHeight()*4/9;
+        ArrayList<TextButton> menuButtons = new ArrayList<TextButton>();
+
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/ubuntu_bold.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 75;
+        parameter.color = Color.WHITE;
+        parameter.minFilter = Texture.TextureFilter.Linear;
+        parameter.magFilter = Texture.TextureFilter.Linear;
         BitmapFont font = generator.generateFont(parameter);
+
         Skin buttonSkin = new Skin();
-        mF.fillLayeredRoundedRectangle(Color.YELLOW, blu, 0, 0, menuButtonSizeX, menuButtonSizeY, 40, 12);   // Button Pixmap (Not Pressed)
+        mF.fillLayeredRoundedRectangle(Color.YELLOW, blue, 0, 0, menuButtonSizeX, menuButtonSizeY, 40, 12);   // Button Pixmap (Not Pressed)
         Pixmap buttonPixmap = mF.getPixmap();
-        mF.fillLayeredRoundedRectangle(Color.YELLOW, blu, 0, 0, menuButtonSizeX, menuButtonSizeY, 40, 12);  // Button Pixmap (Pressed)
+        mF.fillLayeredRoundedRectangle(Color.YELLOW, blue, 0, 0, menuButtonSizeX, menuButtonSizeY, 40, 12);  // Button Pixmap (Pressed)
         Pixmap pushButtonPixmap = mF.getPixmap();
         buttonSkin.add("yellow", new Texture(buttonPixmap));
         buttonSkin.add("default", font);
@@ -168,5 +126,52 @@ class MainMenuScreen implements Screen {
         generator.dispose();
         buttonPixmap.dispose();
         pushButtonPixmap.dispose();
+    }
+
+    @Override
+    public void render (float delta) {
+        onBackPressed(stage);
+
+        Gdx.gl.glClearColor(44f/255f, 182f/255f, 216f/255f, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        stage.act(delta);
+        stage.draw();
+    }
+
+    @Override
+    public void dispose () {
+
+    }
+
+    @Override
+    public void hide() {
+
+    }
+
+    @Override
+    public void show() {
+
+    }
+
+    @Override
+    public void resume() {
+
+    }
+
+    @Override
+    public void pause() {
+
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        viewport.update(width, height);
+    }
+
+    private void onBackPressed(Stage stage) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.BACK)) {
+            exitDialog.show(stage);
+        }
     }
 }
