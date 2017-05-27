@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeType;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -36,10 +37,11 @@ class MainMenuScreen implements Screen {
     private Viewport viewport;
     private Stage stage;
     private Dialog exitDialog;
+    private BitmapFont font;
 
     MainMenuScreen(Game game) {
-        exitDialog = mF.createDialog(game, "Exit Game?", "exit");
         Camera camera = new PerspectiveCamera();
+
         this.game = game;
         this.stage = new Stage();
         this.viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), camera);
@@ -54,18 +56,16 @@ class MainMenuScreen implements Screen {
         Color blue = new Color(44f/255f, 182f/255f, 216f/255f, 1);
         Color yellow = new Color(240, 240, 0, 1);
 
+        // Menu Font
+        createFont();
+
+        // Dialog
+        exitDialog = mF.createDialog(game, "Exit Game?", "exit");
+
         // Main Menu
         final int menuButtonSizeX = 500, menuButtonSizeY = 180;
         int initButtonPos = Gdx.graphics.getHeight()*4/9;
         ArrayList<TextButton> menuButtons = new ArrayList<TextButton>();
-
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/ubuntu_bold.ttf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 75;
-        parameter.color = Color.WHITE;
-        parameter.minFilter = Texture.TextureFilter.Linear;
-        parameter.magFilter = Texture.TextureFilter.Linear;
-        BitmapFont font = generator.generateFont(parameter);
 
         Skin buttonSkin = new Skin();
         mF.fillLayeredRoundedRectangle(Color.YELLOW, blue, 0, 0, menuButtonSizeX, menuButtonSizeY, 40, 12);   // Button Pixmap (Not Pressed)
@@ -123,7 +123,6 @@ class MainMenuScreen implements Screen {
         menuButtons.get(2).setText("Options");
         menuButtons.get(3).setText("Quit Game");
 
-        generator.dispose();
         buttonPixmap.dispose();
         pushButtonPixmap.dispose();
     }
@@ -173,5 +172,17 @@ class MainMenuScreen implements Screen {
         if (Gdx.input.isKeyJustPressed(Input.Keys.BACK)) {
             exitDialog.show(stage);
         }
+    }
+
+    private void createFont() {
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/ubuntu_bold.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 75;
+        parameter.color = Color.WHITE;
+        parameter.minFilter = Texture.TextureFilter.Linear;
+        parameter.magFilter = Texture.TextureFilter.Linear;
+        font = generator.generateFont(parameter);
+
+        generator.dispose();
     }
 }
