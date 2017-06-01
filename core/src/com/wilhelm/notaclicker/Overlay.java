@@ -9,31 +9,29 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 
 /**
  * @author Brett_W
  */
 
 class Overlay extends Actor {
-    private Batch batch;
     private BitmapFont yellowFont, whiteFont;
     private TimeBar timeBar;
     private PlayerBar playerBar;
     private GameBar gameBar;
     private GlyphLayout layout = new GlyphLayout();
-    private Color yellow = new Color(240, 240, 0, 1);
-    private Color blue = new Color(44f/255f, 182f/255f, 216f/255f, 1);
+    private Color yellow = new Color(240, 240, 0, 1), blue = new Color(44f/255f, 182f/255f, 216f/255f, 1);
+    private Player p;
     private int textPadding = Gdx.graphics.getWidth()/60;
 
-    Overlay(Stage stage) {
+    Overlay(Player p) {
+        this.p = p;
         final int lineThickness = 10;
         Color borderColor = yellow;
         ShapeRenderer sR = new ShapeRenderer();
 
         createFont();
 
-        this.batch = stage.getBatch();
         this.timeBar = new TimeBar(sR, borderColor, blue, 0, Gdx.graphics.getHeight()*19/20, Gdx.graphics.getWidth(), Gdx.graphics.getHeight()/20, lineThickness);
         this.playerBar = new PlayerBar(sR, borderColor, blue, 0, 0, Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/13, lineThickness);
         this.gameBar = new GameBar(sR, borderColor, blue, Gdx.graphics.getWidth()/2, 0, Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/13, lineThickness);
@@ -45,9 +43,14 @@ class Overlay extends Actor {
         playerBar.drawShape();
         gameBar.drawShape();
 
-        timeBar.drawInfo();
-        playerBar.drawInfo();
-        gameBar.drawInfo();
+        batch.end();
+        batch.begin();
+
+        timeBar.drawInfo(batch);
+        playerBar.drawInfo(batch);
+        gameBar.drawInfo(batch);
+        batch.end();
+        batch.begin();
     }
 
     private void createFont() {
@@ -92,9 +95,9 @@ class Overlay extends Actor {
             s.end();
         }
 
-        void drawInfo() {
-            String text1 = "";
-            String text2 = "";
+        void drawInfo(Batch batch) {
+            String text1 = p.getMoney()+"";
+            String text2 = p.getMoney()+"";
             String text3 = "";
             String bName = "";
             String pName = "";
@@ -146,7 +149,7 @@ class Overlay extends Actor {
             s.end();
         }
 
-        void drawInfo() {
+        void drawInfo(Batch batch) {
             String text1 = "";
             String text2 = "";
             String text3 = "";
@@ -200,10 +203,10 @@ class Overlay extends Actor {
             s.end();
         }
 
-        void drawInfo() {
-            String text1 = "sup";
+        void drawInfo(Batch batch) {
+            String text1 = "";
             String text2 = "";
-            String text3 = "boyo";
+            String text3 = "";
             String bName = "";
             String pName = "";
             String exp = "";

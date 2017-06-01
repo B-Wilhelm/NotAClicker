@@ -25,7 +25,6 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 class GameScreen implements Screen {
     private Player p;
-    private Overlay o;
     private MiscFunc mF = new MiscFunc();
     private Game game;
     private Stage stage;
@@ -46,19 +45,18 @@ class GameScreen implements Screen {
 
     private void init() {
         p = new Player();
-        o = new Overlay(stage);
+        Overlay o = new Overlay(p);
         stage.addActor(o);
 
         exitDialog = mF.createDialog(game, "Return to Main Menu?", "main");
-//        stage.addActor(exitDialog);
     }
 
     @Override
     public void render (float delta) {
         onBackPressed();
 
+
         Gdx.gl.glClearColor(44f/255f, 182f/255f, 216f/255f, 1);
-//        Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         stage.act(delta);
