@@ -31,7 +31,7 @@ import java.util.ArrayList;
  */
 
 class MainMenuScreen implements Screen {
-    private MiscFunc mF = new MiscFunc();
+    private MiscFunc mF;
     private Game game;
     private Viewport viewport;
     private Stage stage;
@@ -41,6 +41,7 @@ class MainMenuScreen implements Screen {
     MainMenuScreen(Game game) {
         Camera camera = new PerspectiveCamera();
 
+        this.mF = new MiscFunc();
         this.game = game;
         this.stage = new Stage();
         this.viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), camera);
@@ -80,7 +81,6 @@ class MainMenuScreen implements Screen {
         buttonStyle.down = buttonSkin.newDrawable(new TextureRegionDrawable(new TextureRegion(new Texture(pushButtonPixmap))));
         buttonStyle.font = buttonSkin.getFont("default");
         buttonSkin.add("default", buttonStyle);
-
         for(int i = 0; i < 4; i++) {
             final int index = i;
             menuButtons.add(i, new TextButton("", buttonSkin));
@@ -90,12 +90,10 @@ class MainMenuScreen implements Screen {
                 public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) { return true; }
                 @Override
                 public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-
                     Stage stage = event.getTarget().getStage();
                     Vector2 mouse = stage.screenToStageCoordinates( new Vector2(Gdx.input.getX(), Gdx.input.getY()) );
 
-                    if(stage.hit(mouse.x, mouse.y, true) == event.getTarget())
-                    {
+                    if(stage.hit(mouse.x, mouse.y, true) == event.getTarget()) {
                         switch(index) {
                             case 0:
                                 game.setScreen(new GameScreen(game));
@@ -181,7 +179,6 @@ class MainMenuScreen implements Screen {
         parameter.minFilter = Texture.TextureFilter.Linear;
         parameter.magFilter = Texture.TextureFilter.Linear;
         font = generator.generateFont(parameter);
-
         generator.dispose();
     }
 }

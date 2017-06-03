@@ -20,13 +20,16 @@ class Overlay extends Actor {
     private PlayerBar playerBar;
     private GameBar gameBar;
     private GlyphLayout layout = new GlyphLayout();
-    private Color yellow = new Color(240, 240, 0, 1), blue = new Color(44f/255f, 182f/255f, 216f/255f, 1);
+    private Color yellow = new Color(240, 240, 0, 1);
     private Player p;
+    private GameData d;
     private int textPadding = Gdx.graphics.getWidth()/60;
 
-    Overlay(Player p) {
+    Overlay(Player p, GameData d) {
         this.p = p;
+        this.d = d;
         final int lineThickness = 10;
+        Color blue = new Color(44f/255f, 182f/255f, 216f/255f, 1);
         Color borderColor = yellow;
         ShapeRenderer sR = new ShapeRenderer();
 
@@ -56,7 +59,7 @@ class Overlay extends Actor {
     private void createFont() {
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/ubuntu_bold.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = Gdx.graphics.getWidth()/34;
+        parameter.size = Gdx.graphics.getWidth()/24;
         parameter.minFilter = Texture.TextureFilter.Linear;
         parameter.magFilter = Texture.TextureFilter.Linear;
         parameter.color = yellow;
@@ -96,24 +99,24 @@ class Overlay extends Actor {
         }
 
         void drawInfo(Batch batch) {
-            String text1 = p.getMoney()+"";
-            String text2 = p.getMoney()+"";
-            String text3 = "";
-            String bName = "";
-            String pName = "";
-            String exp = "";
+            final String currencyUnit = "$ ";
+            String money = p.getMoney()+"";
+            final String yearUnit = "Year: ", dayUnit = "Day: ";
+            String year = d.getYear()+"";
+            String day = d.getDay()+"";
 
-            yellowFont.draw(batch, text1, x+textPadding, y+ Gdx.graphics.getHeight()/16);
-            layout.setText(whiteFont,bName);
-            whiteFont.draw(batch, bName, x+width-textPadding-layout.width-(thickness/2), y+Gdx.graphics.getHeight()/16);
+            layout.setText(whiteFont,money);   // Currency Display
+            whiteFont.draw(batch, money, x+width-textPadding-layout.width, y+height/2+layout.height/2+thickness/2);
+            layout.setText(yellowFont,currencyUnit+money);
+            yellowFont.draw(batch, currencyUnit, x+width-textPadding-layout.width, y+height/2+layout.height/2+thickness/2);
 
-            yellowFont.draw(batch, text2, x+textPadding, y+Gdx.graphics.getHeight()/24);
-            layout.setText(whiteFont,pName);
-            whiteFont.draw(batch, pName, x+width-textPadding-layout.width-(thickness/2), y+Gdx.graphics.getHeight()/24);
-
-            yellowFont.draw(batch, text3, x+textPadding, y+Gdx.graphics.getHeight()/50);
-            layout.setText(whiteFont,exp);
-            whiteFont.draw(batch, exp, x+width-textPadding-layout.width-(thickness/2), y+Gdx.graphics.getHeight()/50);
+            layout.setText(yellowFont,yearUnit);    // Time Display
+            yellowFont.draw(batch, yearUnit, x+textPadding, y+height/2+layout.height/2+thickness/2);
+            whiteFont.draw(batch, year, x+textPadding+layout.width, y+height/2+layout.height/2+thickness/2);
+            layout.setText(yellowFont,yearUnit+year+"  ");
+            yellowFont.draw(batch, dayUnit, x+textPadding+layout.width, y+height/2+layout.height/2+thickness/2);
+            layout.setText(whiteFont,yearUnit+year+"  "+dayUnit);
+            whiteFont.draw(batch, day, x+textPadding+layout.width, y+height/2+layout.height/2+thickness/2);
         }
     }
 

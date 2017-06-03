@@ -21,7 +21,7 @@ class Player {
         this.expBound = 100;
     }
 
-    public Player(String pName, String bName) {
+    Player(String pName, String bName) {
         this.pName = pName;
         this.bName = bName;
         this.wallet = 100;
